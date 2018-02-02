@@ -20,7 +20,8 @@ metadata {
 	definition (name: "Foscam Universal Device", namespace: "skp19", author: "skp19") {
 		capability "Polling"
 		capability "Image Capture"
-        
+		capability "Lock"
+
         attribute "alarmStatus", "string"
         attribute "ledStatus",   "string"
         attribute "hubactionMode", "string"
@@ -212,6 +213,13 @@ def alarmOff() {
     else {
     	hubGet("/set_alarm.cgi?motion_armed=0&")
     }
+}
+
+def lock() {
+	alarmOn()
+}
+def unlock() {
+	alarmOff()
 }
 //END ALARM ACTIONS
 
@@ -435,7 +443,7 @@ private hubGet(def apiCommand) {
         hubAction.options = [outputMsgToS3:true]
         sendEvent(name: "hubactionMode", value: "local");
     }
-	hubAction
+    sendHubCommand(hubAction)
 }
 
 //Parse events into attributes
